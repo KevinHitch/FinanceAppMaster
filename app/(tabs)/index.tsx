@@ -1,70 +1,159 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function HomeScreen() {
+export default function ReportScreen() {
+  const diversificationData = {
+    labels: ['Savings', 'Checking', 'IRA', 'Stock'],
+    datasets: [
+      {
+        data: [630, 192, 948, 946],
+        backgroundColor: ['#ff9800', '#ffc107', '#4caf50', '#03a9f4'],
+        hoverBackgroundColor: ['#ff9800', '#ffc107', '#4caf50', '#03a9f4'],
+      },
+    ],
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <Text style={styles.title}>Financial Report</Text>
+        <Text style={styles.subtitle}>May 31 - July 23 (53 days)</Text>
+
+        <View style={styles.overviewContainer}>
+          <View style={[styles.overviewItem, { backgroundColor: '#2196f3' }]}>
+            <Text style={styles.overviewLabel}>Net</Text>
+            <Text style={styles.overviewValue}>2,304</Text>
+          </View>
+          <View style={[styles.overviewItem, { backgroundColor: '#4caf50' }]}>
+            <Text style={styles.overviewLabel}>Asset</Text>
+            <Text style={styles.overviewValue}>2,716</Text>
+          </View>
+          <View style={[styles.overviewItem, { backgroundColor: '#f44336' }]}>
+            <Text style={styles.overviewLabel}>Debt</Text>
+            <Text style={styles.overviewValue}>413</Text>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Performance</Text>
+          <Text style={styles.emptyText}>No content in table</Text>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Composition</Text>
+          <View style={styles.chartContainer}>
+            <Pie data={diversificationData} />
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Diversification</Text>
+          <View style={styles.chartContainer}>
+            <Pie data={diversificationData} />
+            <View style={styles.accountList}>
+              {diversificationData.labels.map((label, index) => (
+                <View key={label} style={styles.accountItem}>
+                  <Text style={styles.accountName}>{label}</Text>
+                  <Text style={styles.accountValue}>
+                    ${diversificationData.datasets[0].data[index]}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Debt</Text>
+          <Text style={styles.emptyText}>No content in table</Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: '#1f2937',
   },
-  stepContainer: {
-    gap: 8,
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginTop: 16,
+    marginLeft: 16,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#9ca3af',
+    marginLeft: 16,
+    marginBottom: 16,
+  },
+  overviewContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 16,
+    marginBottom: 16,
+  },
+  overviewItem: {
+    flex: 1,
+    borderRadius: 8,
+    padding: 16,
+    marginHorizontal: 4,
+  },
+  overviewLabel: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  overviewValue: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginTop: 4,
+  },
+  section: {
+    backgroundColor: '#374151',
+    borderRadius: 8,
+    padding: 16,
+    marginHorizontal: 16,
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  emptyText: {
+    color: '#9ca3af',
+    textAlign: 'center',
+  },
+  chartContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  accountList: {
+    flex: 1,
+    marginLeft: 16,
+  },
+  accountItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  accountName: {
+    color: '#fff',
+  },
+  accountValue: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
